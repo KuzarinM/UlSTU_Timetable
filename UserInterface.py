@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import sqlite3
 from Settings import *
+from html2image import Html2Image
 
 
 def to_standard(text):
@@ -25,13 +26,15 @@ def get_data(group):
         timetable[record[0]][record[1]][record[2]].append([record[3], to_standard(record[4]), record[5], record[6],
                                                            record[7]])
     conn.commit()
-    save_resout(create_HTML(timetable, group))
+    return timetable
 
 
 def create_HTML(timetable, group):
+    global global_timetable
     html = f"{html_header}<H1>Расписание для группы {group}</H1>\n<H2>Чётная неделя</H2>\n"
     html += template + create_table(timetable[0]) + "</tbody>\n</table>\n"
     html += "<H2>Нечётная неделя</H2>\n" + template + create_table(timetable[1])
+    global_timetable = timetable
     return html
 
 
@@ -64,5 +67,21 @@ def save_resout(text):
         f.write(text)
 
 
+def create_jpg_version(timetable,group):
+    hti = Html2Image()
+    for i in range(2):
+        info = "<H1>Чётная неделя</H1>\n"
+        if i!=0 :
+            info = "<H1>Нечётная неделя</H1>\n"
+        html =html_header+info+template + create_table(timetable[i]) +"</tbody>\n</table>\n</HTML>\n</BODY>\n"
+        hti.screenshot(html_str=html, save_as=f"{i+1}.jpg", size=(1200, 1000))
+
+
+def create_html_version(timetable,group):
+    save_resout(create_HTML(timetable, group))
+
+
 if __name__ == '__main__':
-    get_data("ПИбд-23")
+    timetable = get_data("ПИбд-23")
+    create_html_version(timetable,"ПИбд-23")
+    create_jpg_version(timetable,"ПИбд-23")
