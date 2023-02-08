@@ -64,7 +64,7 @@ async def check_subject(conn, subject):
         await set_subject(conn, subject, group)
 
 
-async def open_file(id, conn):
+async def open_file(id, conn, err):
     with open(f"{html_save_path}{id}.html", "r") as f:
         contents = f.read()
         soup = BeautifulSoup(contents, 'lxml')
@@ -72,6 +72,7 @@ async def open_file(id, conn):
             await timetable_analise(soup, conn)
         except Exception:
             print(f"Ошибка при обработке id={id}")
+            err.append(id)
 
 
 async def operate():
@@ -80,11 +81,11 @@ async def operate():
     await cur.execute(clear_old_sql_request)
     await cur.execute(set_unchecked_mode_sql_request)
 
+    errors = []
     for i in range(1, teachers_count):
-        await open_file(i, conn)
-        print(i)
-
-
+        print("обработка расписания преподавателя " + str(i))
+        await open_file(i, conn, errors)
+    print(f"Ошибки в обработке:{errors}")
 
 
 if __name__ == '__main__':

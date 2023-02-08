@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from requests import request
 from Settings import *
 from time import sleep
@@ -17,7 +18,13 @@ def get_HTML(id):
     global session
     for i in range(100):
         try:
-            return request('GET', get_URL(id), cookies={"AMS_LAST_LOGIN": username, "AMS_SESSION_ID": session})
+            sleep(0.3)
+            res = request('GET', get_URL(id), cookies={"AMS_LAST_LOGIN": username, "AMS_SESSION_ID": session})
+            if res.status_code != 200:
+                sleep(2)
+                print(f"код{res.status_code} на позиции {id} всего{i + 1}")
+                continue
+            return res
         except Exception:
             sleep(2)
             print(f"остановка на позиции {id} всего{i + 1}")
@@ -25,8 +32,8 @@ def get_HTML(id):
 
 
 def download(password):
-    authentication(username, password)
-    for i in range(0, teachers_count):
+    #authentication(username, password)
+    for i in range(1, teachers_count):
         data = get_HTML(i)
         if data is not None:
             data = normalise_HTML(data.content.decode('cp1251'))
@@ -62,4 +69,4 @@ def authentication(login, password):
 
 
 if __name__ == '__main__':
-    download()
+    download("")

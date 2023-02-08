@@ -49,7 +49,7 @@ html_save_path = "Data/"
 # Константы работы
 teachers_count = 603
 username = "m.kuzyarin"
-session = "9akflpfv0355rtervoocuoj3tg"
+session = "m3og30jmro2mhpk9a0il9on2cp"
 types = {"лек": "Лекция:", "пр": "Практика:", "лаб": "Лабораторка:"}
 days = ["Пнд.", "Втр.", "Срд.", "Чтв.", "Птн.", "Сбт."]
 #URL запросов

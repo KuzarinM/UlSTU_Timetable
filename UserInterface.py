@@ -45,17 +45,16 @@ def create_table(timetable):
         for par in range(0, 8):
             color = "white"
             text = "-"
-
             if len(timetable[day][par]) != 0:
                 text = ""
                 for record in timetable[day][par]:
-                    text += f"{types[record[0]]}<br>{record[1]}<br>{record[2]}<br>{record[4]}<br>"
-
                     if record[3] == 2:
                         color = "cyan"
                     elif record[3] == 1:
                         color = "brown"
-                        text = "-"
+                        text += "-<br>"
+                        continue
+                    text += f"{types[record[0]]}<br>{record[1]}<br>{record[2]}<br>{record[4]}<br>"
 
             html += f"<td style=\"background-color: {color};\"><P ALIGN=\"CENTER\">{text}</p></td>\n"
         html += "</tr>\n"
