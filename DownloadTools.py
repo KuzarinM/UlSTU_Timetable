@@ -73,4 +73,4 @@ def authentication(login, password):
 
 
 if __name__ == '__main__':
-    download("")
+    download("")#пароль писсать сюда
