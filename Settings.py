@@ -1,5 +1,5 @@
 from Subject import Subject
-
+global session
 # HTML
 html_header = "<HTML>\n" \
               "<HEAD>\n" \
@@ -54,6 +54,7 @@ types = {"лек": "Лекция:", "пр": "Практика:", "лаб": "Ла
 days = ["Пнд.", "Втр.", "Срд.", "Чтв.", "Птн.", "Сбт."]
 #URL запросов
 timetable_url = "https://lk.ulstu.ru/timetable/shared/teachers/m"
+authentication_url = "https://lk.ulstu.ru/?q=auth"
 #Глобальные переменные
 global_timetable = []
 

@@ -49,5 +49,16 @@ def download():
                     print(f"Страница {str(i)} была создана!")
 
 
+def authentication(login, password):
+    global session
+    response = request("POST", authentication_url, data={"login": login, "password": password})
+    if response.status_code == 200:
+        session_id = response.history[0].cookies.get("AMS_SESSION_ID")
+        if session_id is not None:
+            session = session_id
+            return True
+    return False
+
+
 if __name__ == '__main__':
     download()
