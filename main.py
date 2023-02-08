@@ -1,7 +1,6 @@
 import datetime
 import asyncio
 from time import sleep
-from Settings import username
 from DownloadTools import download, authentication
 from DatabaseEditor import operate
 from UserInterface import get_data
@@ -39,8 +38,7 @@ if __name__ == '__main__':
     Groupe = "ПИбд-23"
     needUpdate = ReadEEPROM()
     if(needUpdate):
-        authentication(username,user_password)
-        download()
+        download(user_password)
         WriteEEPROM()
     sleep(5)
     asyncio.run(operate())

@@ -3,7 +3,6 @@ from Settings import *
 from time import sleep
 import os
 
-
 def get_URL(i):
     return timetable_url + str(i) + ".html"
 
@@ -15,6 +14,7 @@ def normalise_HTML(html):
 
 
 def get_HTML(id):
+    global session
     for i in range(100):
         try:
             return request('GET', get_URL(id), cookies={"AMS_LAST_LOGIN": username, "AMS_SESSION_ID": session})
@@ -24,7 +24,8 @@ def get_HTML(id):
     return None
 
 
-def download():
+def download(password):
+    authentication(username, password)
     for i in range(0, teachers_count):
         data = get_HTML(i)
         if data is not None:
@@ -56,7 +57,7 @@ def authentication(login, password):
         session_id = response.history[0].cookies.get("AMS_SESSION_ID")
         if session_id is not None:
             session = session_id
-            return True
+            return session
     return False
 
 
