@@ -1,5 +1,5 @@
 from Subject import Subject
-global session
+global session_id
 # HTML
 html_header = "<HTML>\n" \
               "<HEAD>\n" \
@@ -49,12 +49,12 @@ html_save_path = "Data/"
 # Константы работы
 teachers_count = 603
 username = "m.kuzyarin"
-session = "m3og30jmro2mhpk9a0il9on2cp"
+session_id = "m3og30jmro2mhpk9a0il9on2cp"
 types = {"лек": "Лекция:", "пр": "Практика:", "лаб": "Лабораторка:"}
 days = ["Пнд.", "Втр.", "Срд.", "Чтв.", "Птн.", "Сбт."]
 #URL запросов
 timetable_url = "https://lk.ulstu.ru/timetable/shared/teachers/m"
-authentication_url = "https://lk.ulstu.ru/?q=auth"
+authentication_url = "https://lk.ulstu.ru/?q=auth/login"
 #Глобальные переменные
 global_timetable = []
 
