@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 from requests import request
+from requests import Session
 from Settings import *
 from time import sleep
 import os
-
 
 def get_URL(i):
     return timetable_url + str(i) + ".html"
@@ -14,19 +15,28 @@ def normalise_HTML(html):
     return html
 
 
-def get_HTML(id):
+def get_HTML(id, ses):
+    global session_id
     for i in range(100):
         try:
-            return request('GET', get_URL(id), cookies={"AMS_LAST_LOGIN": username, "AMS_SESSION_ID": session})
+            sleep(0.2)
+            #на случай, если появится желание использовать session_id
+            res = ses.get(get_URL(id), cookies={"AMS_LAST_LOGIN": username, "AMS_SESSION_ID": session_id})
+            if res.status_code != 200:
+                sleep(2)
+                print(f"код{res.status_code} на позиции {id} всего{i + 1}")
+                continue
+            return res
         except Exception:
             sleep(2)
             print(f"остановка на позиции {id} всего{i + 1}")
     return None
 
 
-def download():
-    for i in range(0, teachers_count):
-        data = get_HTML(i)
+def download(password):
+    my_session = authentication(username, password)
+    for i in range(1, teachers_count):
+        data = get_HTML(i,my_session)
         if data is not None:
             data = normalise_HTML(data.content.decode('cp1251'))
             if os.path.exists(f"{html_save_path}{str(i)}.html"):
@@ -49,5 +59,18 @@ def download():
                     print(f"Страница {str(i)} была создана!")
 
 
+def authentication(login, password):
+    global session_id
+    ses = Session()
+    response = ses.post(authentication_url, data={"login": login, "password": password})
+    if response.status_code == 200:
+        ses_id =  response.history[0].cookies.get("AMS_SESSION_ID")
+        if ses_id is not None:
+            session_id = ses_id
+            return ses
+    return Session()
+
+
+
 if __name__ == '__main__':
-    download()
+    download("")#пароль писсать сюда

@@ -1,16 +1,16 @@
 from Subject import Subject
-
+global session_id
 # HTML
 html_header = "<HTML>\n" \
               "<HEAD>\n" \
               "<TITLE>Расписание.net</TITLE>\n" \
               "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" \
               "</HEAD>\n" \
-              "<BODY>\n"
+              "<BODY style=\"background: white;\">\n"
 template = "<TABLE border=\"#000000\" cellspacing=\"3\" STYLE=\"width:90%\">\n" \
            "<thead>\n" \
            "<tr>\n" \
-           "<td><P ALIGN=\"CENTER\>Пары</p></td>\n" \
+           "<td><P ALIGN=\"CENTER\">Пары</p></td>\n" \
            "<td><P ALIGN=\"CENTER\">1-я</p></td>\n" \
            "<td><P ALIGN=\"CENTER\">2-я</p></td>\n" \
            "<td><P ALIGN=\"CENTER\">3-я</p></td>\n" \
@@ -49,12 +49,14 @@ html_save_path = "Data/"
 # Константы работы
 teachers_count = 603
 username = "m.kuzyarin"
-session = "okc6chlbqqmii3sg318clj2fc8"
+session_id = "m3og30jmro2mhpk9a0il9on2cp"
 types = {"лек": "Лекция:", "пр": "Практика:", "лаб": "Лабораторка:"}
 days = ["Пнд.", "Втр.", "Срд.", "Чтв.", "Птн.", "Сбт."]
 #URL запросов
 timetable_url = "https://lk.ulstu.ru/timetable/shared/teachers/m"
-
+authentication_url = "https://lk.ulstu.ru/?q=auth/login"
+#Глобальные переменные
+global_timetable = []
 
 # Сложные SQL запросы
 def sql_insert_into_subject(subject, group_id):

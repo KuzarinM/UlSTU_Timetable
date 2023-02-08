@@ -1,10 +1,11 @@
 import datetime
 import asyncio
 from time import sleep
-from DownloadTools import download
+from DownloadTools import download, authentication
 from DatabaseEditor import operate
 from UserInterface import get_data
 
+global user_password
 
 def CheckTime(lastUpdate):
     last = datetime.datetime(int(lastUpdate[0]), int(lastUpdate[1]), int(lastUpdate[2]),
@@ -17,11 +18,13 @@ def CheckTime(lastUpdate):
 
 
 def ReadEEPROM():
+    global user_password
     needUpdate = True
     with open("settings.txt", "r") as f:
         setting = f.read()
         setting = setting.split("\n")
         needUpdate = CheckTime(setting[0].split("|"))
+        user_password = setting[1]
     return needUpdate
 
 
@@ -35,7 +38,7 @@ if __name__ == '__main__':
     Groupe = "ПИбд-23"
     needUpdate = ReadEEPROM()
     if(needUpdate):
-        download()
+        download(user_password)
         WriteEEPROM()
     sleep(5)
     asyncio.run(operate())
