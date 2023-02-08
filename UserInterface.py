@@ -82,6 +82,7 @@ def create_html_version(timetable,group):
 
 
 if __name__ == '__main__':
-    timetable = get_data("ПИбд-23")
-    create_html_version(timetable,"ПИбд-23")
-    create_jpg_version(timetable,"ПИбд-23")
+    group = "ПИбд-23"
+    timetable = get_data(group)
+    create_html_version(timetable, group)
+    create_jpg_version(timetable, group)
