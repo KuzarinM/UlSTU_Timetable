@@ -86,7 +86,6 @@ async def operate():
         print("обработка расписания преподавателя " + str(i))
         await open_file(i, conn, errors)
     print(f"Ошибки в обработке:{errors}")
-    asyncio.
 
 
 if __name__ == '__main__':
