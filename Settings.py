@@ -1,5 +1,6 @@
 from Subject import Subject
 global session_id
+global teachers_count
 # HTML
 html_header = "<HTML>\n" \
               "<HEAD>\n" \
@@ -55,6 +56,7 @@ days = ["Пнд.", "Втр.", "Срд.", "Чтв.", "Птн.", "Сбт."]
 #URL запросов
 timetable_url = "https://lk.ulstu.ru/timetable/shared/teachers/m"
 authentication_url = "https://lk.ulstu.ru/?q=auth/login"
+teachers_cont_url = "https://lk.ulstu.ru/timetable/shared/teachers/Praspisan.html"
 #Глобальные переменные
 global_timetable = []
 

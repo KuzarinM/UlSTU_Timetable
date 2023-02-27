@@ -32,6 +32,7 @@ def WriteEEPROM():
     with open("settings.txt", "w") as f:
         setting = datetime.datetime.now().strftime("%Y|%m|%d|%H|%M") + "\n"
         f.write(setting)
+        f.write(user_password)
 
 
 if __name__ == '__main__':
