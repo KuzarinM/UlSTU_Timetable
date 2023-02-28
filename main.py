@@ -1,50 +1,42 @@
 import datetime
 import asyncio
 from time import sleep
-from DownloadTools import download, authentication
+from DownloadTools import download
 from DatabaseEditor import operate
+import EEPROM
+from Settings import *
 from UserInterface import get_data
 
-global user_password
 
-def CheckTime(lastUpdate):
-    last = datetime.datetime(int(lastUpdate[0]), int(lastUpdate[1]), int(lastUpdate[2]),
-                             int(lastUpdate[3]), int(lastUpdate[4]))
+def check_time(last_update):
+    last = datetime.datetime(int(last_update[0]), int(last_update[1]), int(last_update[2]),
+                             int(last_update[3]), int(last_update[4]))
     diff = (datetime.datetime.now() - last).total_seconds()
-    print("С момента обновления прошло: "+str(diff))
-    if (diff < 3600):
-        return False
-    return True
+    print("С момента обновления прошло: " + str(diff))
+    return diff >= 3600
 
 
-def ReadEEPROM():
-    global user_password
-    needUpdate = True
-    with open("settings.txt", "r") as f:
-        setting = f.read()
-        setting = setting.split("\n")
-        needUpdate = CheckTime(setting[0].split("|"))
-        user_password = setting[1]
-    return needUpdate
+def initiate_update_sequence():
+    global in_updating
+    need_update = check_time(EEPROM.read_data("last_update").split("|"))
+    in_updating = True
+    if need_update:
+        download(EEPROM.read_data("password"))
+        EEPROM.write_data("last_update", datetime.datetime.now().strftime("%Y|%m|%d|%H|%M"))
+    sleep(5)
+    asyncio.run(operate())
+    in_updating = False
 
 
-def WriteEEPROM():
-    with open("settings.txt", "w") as f:
-        setting = datetime.datetime.now().strftime("%Y|%m|%d|%H|%M") + "\n"
-        f.write(setting)
-        f.write(user_password)
+def update(login, password):
+    global in_updating
+    in_updating = True
+    download(password, login)
+    sleep(5)
+    asyncio.run(operate())
+    in_updating = False
+
 
 
 if __name__ == '__main__':
-    Groupe = "ПИбд-23"
-    needUpdate = ReadEEPROM()
-    if(needUpdate):
-        download(user_password)
-        WriteEEPROM()
-    sleep(5)
-    asyncio.run(operate())
-
-
-
-
-
+    initiate_update_sequence()

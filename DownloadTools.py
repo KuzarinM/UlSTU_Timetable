@@ -6,6 +6,7 @@ from time import sleep
 import os
 from bs4 import BeautifulSoup
 
+
 def get_URL(i):
     return timetable_url + str(i) + ".html"
 
@@ -21,7 +22,7 @@ def get_HTML(id, ses):
     for i in range(100):
         try:
             sleep(0.2)
-            #на случай, если появится желание использовать session_id
+            # на случай, если появится желание использовать session_id
             res = ses.get(get_URL(id), cookies={"AMS_LAST_LOGIN": username, "AMS_SESSION_ID": session_id})
             if res.status_code != 200:
                 sleep(2)
@@ -34,12 +35,12 @@ def get_HTML(id, ses):
     return None
 
 
-def download(password):
-    my_session = authentication(username, password)
+def download(password, login=username):
+    my_session = authentication(login, password)
     check_teachers_count(my_session)
 
     for i in range(1, teachers_count):
-        data = get_HTML(i,my_session)
+        data = get_HTML(i, my_session)
         if data is not None:
             data = normalise_HTML(data.content.decode('cp1251'))
             if os.path.exists(f"{html_save_path}{str(i)}.html"):
@@ -67,7 +68,7 @@ def authentication(login, password):
     ses = Session()
     response = ses.post(authentication_url, data={"login": login, "password": password})
     if response.status_code == 200:
-        ses_id =  response.history[0].cookies.get("AMS_SESSION_ID")
+        ses_id = response.history[0].cookies.get("AMS_SESSION_ID")
         if ses_id is not None:
             session_id = ses_id
             return ses
@@ -86,7 +87,7 @@ def check_teachers_count(ses):
                 print(f"код{res.status_code} при получении всписка учителей")
                 continue
             soup = BeautifulSoup(normalise_HTML(res.content.decode('cp1251')), 'lxml')
-            count = len(soup.body.table.find_all("tr"))-1
+            count = len(soup.body.table.find_all("tr")) - 1
             if count != teachers_count:
                 print(f"колличесто преподавателей изменилось: раньше - {teachers_count}, теперь их {count}")
                 teachers_count = count
@@ -98,4 +99,4 @@ def check_teachers_count(ses):
 
 
 if __name__ == '__main__':
-    download("")#пароль писсать сюда
+    download("")  # пароль писсать сюда

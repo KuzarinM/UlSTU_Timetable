@@ -66,17 +66,17 @@ def save_resout(text):
         f.write(text)
 
 
-def create_jpg_version(timetable,group):
+def create_jpg_version(timetable, group):
     hti = Html2Image()
     for i in range(2):
         info = "<H1>Чётная неделя</H1>\n"
         if i!=0 :
             info = "<H1>Нечётная неделя</H1>\n"
         html =html_header+info+template + create_table(timetable[i]) +"</tbody>\n</table>\n</HTML>\n</BODY>\n"
-        hti.screenshot(html_str=html, save_as=f"{i+1}.jpg", size=(1200, 1000))
+        hti.screenshot(html_str=html, save_as=f"Resouts/{i+1}.jpg", size=(1200, 1000))
 
 
-def create_html_version(timetable,group):
+def create_html_version(timetable, group):
     save_resout(create_HTML(timetable, group))
 
 
