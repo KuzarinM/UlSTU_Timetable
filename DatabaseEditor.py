@@ -12,23 +12,23 @@ def get_teacher_name(soup):
     return name, int(week)
 
 
-async def timetable_analise(soup, connection):
+async def timetable_analise(soup, connection, updetes):
     teacher, week = get_teacher_name(soup)
     teacher = await test_entities(connection, "teacher", teacher)
     tables = soup.body.find_all("table")
-    await table_parse(tables[0].find_all("tr"), connection, teacher, week)
+    await table_parse(tables[0].find_all("tr"), connection, teacher, week, updetes)
     if len(tables) > 1:
-        await table_parse(tables[1].find_all("tr"), connection, teacher, week + 1)
+        await table_parse(tables[1].find_all("tr"), connection, teacher, week + 1, updetes)
 
 
-async def table_parse(lines, connection, teacher, week):
+async def table_parse(lines, connection, teacher, week, updates):
     for i in range(2, len(lines)):
         column = lines[i].find_all("td")
         for j in range(1, len(column)):
             content = column[j].contents[1].contents[0].contents
             if content[0] != "-" and content[0] != ' ' and content[0] != '_' and len(content) > 4:
                 sub = Subject(teacher, content, [i - 2, j - 1], week)
-                await check_subject(connection, sub)
+                await check_subject(connection, sub, updates)
 
 
 async def test_entities(conn, entities, name):
@@ -43,11 +43,12 @@ async def test_entities(conn, entities, name):
     return one_result[0]
 
 
-async def set_subject(conn, subject, gid):
+async def set_subject(conn, subject, gid, updates):
     cur = await conn.cursor()
     await cur.execute(sql_select_from_subject(subject, gid))
     one_result = await cur.fetchone()
     if one_result is None:
+        updates.append({"gid":gid, "tid": subject.teacher_id})
         await cur.execute(sql_insert_into_subject(subject, gid))
         await cur.execute(sql_select_from_subject(subject, gid))
         one_result = await cur.fetchone()
@@ -57,19 +58,19 @@ async def set_subject(conn, subject, gid):
     return one_result[0]
 
 
-async def check_subject(conn, subject):
+async def check_subject(conn, subject, updates):
     subject.discipline_id = await test_entities(conn, "Discipline", subject.name)
     for i in subject.groups:
         group = await test_entities(conn, "group", i)
-        await set_subject(conn, subject, group)
+        await set_subject(conn, subject, group, updates)
 
 
-async def open_file(id, conn, err):
+async def open_file(id, conn, err, updates):
     with open(f"{html_save_path}{id}.html", "r") as f:
         contents = f.read()
         soup = BeautifulSoup(contents, 'lxml')
         try:
-            await timetable_analise(soup, conn)
+            await timetable_analise(soup, conn, updates)
         except Exception:
             print(f"Ошибка при обработке id={id}")
             err.append(id)
@@ -82,10 +83,13 @@ async def operate():
     await cur.execute(set_unchecked_mode_sql_request)
 
     errors = []
+    updates =[]
     for i in range(1, teachers_count):
         print("обработка расписания преподавателя " + str(i))
-        await open_file(i, conn, errors)
+        await open_file(i, conn, errors, updates)
     print(f"Ошибки в обработке:{errors}")
+    print("Было обновлено:")
+    print(*updates,sep="\n")
     await conn.close()
 
 

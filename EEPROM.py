@@ -21,10 +21,9 @@ def write_data(key, value):
         data = dict(json.load(f))
     data[key] = value
     with open("settings.json", "w") as f:
-        json.dump(data)
+        json.dump(data, f)
 
 
 def read_all():
     with open("settings.json", "r") as f:
         return dict(json.load(f))
-    return None

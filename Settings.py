@@ -2,6 +2,26 @@ from Subject import Subject
 global session_id
 global teachers_count
 global in_updating
+
+# Константы файла
+db_path = "Univercity.db"
+res_html_path = "Resouts/resout.html"
+res_jpg_path = "Resouts/resout.jpg"
+html_save_path = "Data/"
+setting_file_path = "settings.json"
+# Константы работы
+teachers_count = 603
+username = "m.kuzyarin"
+session_id = "m3og30jmro2mhpk9a0il9on2cp"
+types = {"лек": "Лекция:", "пр": "Практика:", "лаб": "Лабораторка:"}
+days = ["Пнд.", "Втр.", "Срд.", "Чтв.", "Птн.", "Сбт."]
+#URL запросов
+timetable_url = "https://lk.ulstu.ru/timetable/shared/teachers/m"
+authentication_url = "https://lk.ulstu.ru/?q=auth/login"
+teachers_cont_url = "https://lk.ulstu.ru/timetable/shared/teachers/Praspisan.html"
+#Глобальные переменные
+in_updating = False
+global_timetable = []
 # HTML
 html_header = "<HTML>\n" \
               "<HEAD>\n" \
@@ -43,25 +63,6 @@ data_sql_request = "SELECT subject.week, subject.dayofweak, subject.pairnumber, 
 group_sql_request = "SELECT * FROM \"group\" WHERE name="
 clear_old_sql_request ="DELETE FROM subject WHERE isdifference=1"
 set_unchecked_mode_sql_request = "UPDATE subject set isdifference = 1"
-# Константы файла
-db_path = "Univercity.db"
-res_html_path = "Resouts/resout.html"
-res_jpg_path = "Resouts/resout.jpg"
-html_save_path = "Data/"
-setting_file_path = "settings.json"
-# Константы работы
-teachers_count = 603
-username = "m.kuzyarin"
-session_id = "m3og30jmro2mhpk9a0il9on2cp"
-types = {"лек": "Лекция:", "пр": "Практика:", "лаб": "Лабораторка:"}
-days = ["Пнд.", "Втр.", "Срд.", "Чтв.", "Птн.", "Сбт."]
-#URL запросов
-timetable_url = "https://lk.ulstu.ru/timetable/shared/teachers/m"
-authentication_url = "https://lk.ulstu.ru/?q=auth/login"
-teachers_cont_url = "https://lk.ulstu.ru/timetable/shared/teachers/Praspisan.html"
-#Глобальные переменные
-in_updating = False
-global_timetable = []
 
 # Сложные SQL запросы
 def sql_insert_into_subject(subject, group_id):
