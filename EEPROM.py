@@ -1,10 +1,13 @@
 import json
+import os
+
 from Settings import *
 
 
 def create_settings_json():
-    with open("settings.json", "w") as f:
-        json.dump({"version": 1.0, "last_update": "0|0|0|0|0", "password": "", "api_key": "28022023"}, f)
+    if os.path.exists("settings.json"):
+        with open("settings.json", "w") as f:
+            json.dump({"version": 1.0, "last_update": "0|0|0|0|0", "password": "", "api_key": "28022023"}, f)
 
 
 def read_data(key):

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import sqlite3
 from Settings import *
 from UserInterface import create_HTML, get_data
@@ -261,6 +262,7 @@ def db_update(key):
     main.update(lgn, psw)
     return "Процедура обновления завершена."
 
+
 @app.route('/api/<string:key>/db/update-status')
 def db_status(key):
     global in_updating
@@ -271,6 +273,13 @@ def db_status(key):
     return "Штатное функционирование"
 
 
+@app.route('/init')
+def Init():
+    EEPROM.create_settings_json()
+    return "Готово"
+
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
+    #app.run(debug=True)
