@@ -1,29 +1,31 @@
 # -*- coding: utf-8 -*-
 from requests import request
 from requests import Session
+
+import EEPROM
 from Settings import *
 from time import sleep
 import os
 from bs4 import BeautifulSoup
 
 
-def get_URL(i):
+def get_url(i):
     return timetable_url + str(i) + ".html"
 
 
-def normalise_HTML(html):
+def normalise_html(html):
     html = html.replace("</br>", "<br>")
     html = html.replace(".", "")
     return html
 
 
-def get_HTML(id, ses):
+def get_html(id, ses):
     global session_id
     for i in range(100):
         try:
             sleep(0.2)
             # на случай, если появится желание использовать session_id
-            res = ses.get(get_URL(id), cookies={"AMS_LAST_LOGIN": username, "AMS_SESSION_ID": session_id})
+            res = ses.get(get_url(id), cookies={"AMS_LAST_LOGIN": username, "AMS_SESSION_ID": session_id})
             if res.status_code != 200:
                 sleep(2)
                 print(f"код{res.status_code} на позиции {id} всего{i + 1}")
@@ -39,10 +41,11 @@ def download(password, login=username):
     my_session = authentication(login, password)
     check_teachers_count(my_session)
 
+    teachers_count = EEPROM.read_data("teachers_count")
     for i in range(1, teachers_count):
-        data = get_HTML(i, my_session)
+        data = get_html(i, my_session)
         if data is not None:
-            data = normalise_HTML(data.content.decode('cp1251'))
+            data = normalise_html(data.content.decode('cp1251'))
             if os.path.exists(f"{html_save_path}{str(i)}.html"):
                 with open(f"{html_save_path}{str(i)}.html", "r") as last:
                     last_html = last.read()
@@ -77,7 +80,7 @@ def authentication(login, password):
 
 def check_teachers_count(ses):
     global session_id
-    global teachers_count
+    teachers_count = EEPROM.read_data("teachers_count")
     for i in range(100):
         try:
             sleep(0.2)
@@ -86,11 +89,12 @@ def check_teachers_count(ses):
                 sleep(2)
                 print(f"код{res.status_code} при получении всписка учителей")
                 continue
-            soup = BeautifulSoup(normalise_HTML(res.content.decode('cp1251')), 'lxml')
+            soup = BeautifulSoup(normalise_html(res.content.decode('cp1251')), 'lxml')
             count = len(soup.body.table.find_all("tr")) - 1
             if count != teachers_count:
                 print(f"колличесто преподавателей изменилось: раньше - {teachers_count}, теперь их {count}")
-                teachers_count = count
+                if teachers_count != count:
+                    EEPROM.write_data("teachers_count", count)
             return
         except Exception:
             sleep(2)
