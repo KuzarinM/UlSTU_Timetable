@@ -61,7 +61,7 @@ def download(password, login=username):
                     else:
                         print(f"Страница {str(i)}")
             else:
-                with open(f"{html_save_path}{str(i)}.html", "w") as f:
+                with open(f"{html_save_path}{str(i)}.html", "w+") as f:
                     f.write(data)
                     print(f"Страница {str(i)} была создана!")
 

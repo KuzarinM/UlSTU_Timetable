@@ -15,6 +15,8 @@ def create_settings_json():
                 "api_key": "28022023",
                 "teachers_count": 602
                 }, f)
+    if not os.path.exists("Data"):
+        os.mkdir("Data")
 
 
 def read_data(key):
